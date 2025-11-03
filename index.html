@@ -7,11 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Chosen Palette: "Clean & Fresh" (Light Muted Blue, Warm Orange/Yellow Gradient, Neutrals) -->
-    <!-- Application Structure Plan: Designed a 6-tab SPA ("Overview", "The Problem", "The People", "The Solution", "The Design", "The Impact"). This "Case Study Explorer" model was chosen over a linear report to empower users (recruiters, peers) to non-linearly explore the case study. It prioritizes user-driven discovery, allowing them to jump directly to "The Solution" (the interactive flow) or "The People" (the personas) without scrolling, enhancing usability and engagement. -->
-    <!-- Visualization & Content Choices: 1. Personas -> Goal: Compare -> Method: HTML Cards + JS Toggle -> Interaction: Click buttons (Priya/Amit/etc) to show/hide respective persona card -> Justification: Allows direct comparison and deep-dives without cluttering the UI. 2. App Flow -> Goal: Organize/Inform -> Method: HTML/JS Interactive Gallery -> Interaction: Click screen name (e.g., "Login") to update a central image viewer and description panel -> Justification: Translates a static 10-screen grid into an interactive, step-by-step user flow simulation. 3. Pricing -> Goal: Compare -> Method: Bar Chart -> Interaction: View chart -> Justification: Visually quantifies the "Budget-Conscious" insight and "Package" choices. -> Library: Chart.js. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -325,7 +320,6 @@
 
             <div id="solution-panel" class="tab-panel">
                 
-                <!-- New Sub-Tab Navigation -->
                 <nav id="solution-sub-nav" class="flex flex-wrap border-b border-gray-200 pb-2 -mt-4 -mx-4 px-4">
                     <button class="sub-tab-btn active" data-subtab="high-fidelity">High-Fidelity Flow</button>
                     <button class="sub-tab-btn inactive" data-subtab="user-flow">User Flow</button>
@@ -335,10 +329,8 @@
                     <button class="sub-tab-btn inactive" data-subtab="typography">Typography</button>
                 </nav>
 
-                <!-- Sub-Tab Panels -->
                 <main id="solution-sub-panels">
                     
-                    <!-- 1. High-Fidelity Panel (Existing Content) -->
                     <div id="high-fidelity-panel" class="sub-tab-panel" style="display:block;">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">The Solution: An Interactive Flow</h2>
                         <p class="text-lg text-gray-700 mb-8">
@@ -385,18 +377,17 @@
                             
                             <div class="w-full md:w-2/3 flex flex-col items-center">
                                 <div class="w-full max-w-sm bg-gray-900 rounded-3xl p-4 shadow-2xl">
-                                    <img id="screen-image" src="Screenshot 2025-10-30 155717.png"
+                                    <img id="screen-image" src="images/Splash Screen.png"
                                          onerror="this.src='https://placehold.co/390x844/f0f9ff/000?text=Image+Not+Found'; this.onerror=null;"
                                          alt="App screen" class="w-full rounded-2xl">
                                 </div>
                                 <div id="screen-desc" class="w-full max-w-sm mt-6 text-center text-lg text-gray-700 bg-gray-100 p-4 rounded-lg">
-                                    (Welcome Screen, far left) The splash screen establishes the "Washy Wash" brand and moves the user forward.
+                                    The splash screen establishes the "Washy Wash" brand and moves the user forward.
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. User Flow Panel (NEW) -->
                     <div id="user-flow-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">User Flow</h2>
                         <p class="text-lg text-gray-700 mb-8">
@@ -405,14 +396,14 @@
                         <div class="space-y-6">
                             <div class="p-6 bg-gray-50 rounded-lg border">
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 1: Onboarding to Booking</h3>
-                                <img src="Screenshot 2025-10-30 162743.png" 
+                                <img src="images/Washy Wash Consumer Based user flow.png" 
                                      alt="User flow for onboarding and booking" 
                                      class="w-full rounded-lg border bg-white"
                                      onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=User+Flow+Not+Found'; this.onerror=null;">
                             </div>
                             <div class="p-6 bg-gray-50 rounded-lg border">
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 2: Payment & Confirmation Logic</h3>
-                                <img src="Screenshot 2025-10-30 162748.png" 
+                                <img src="images/Payment.png" 
                                      alt="User flow for payment logic" 
                                      class="w-full max-w-3xl mx-auto rounded-lg border bg-white"
                                      onerror="this.src='https://placehold.co/800x600/f0f9ff/000?text=Payment+Flow+Not+Found'; this.onerror=null;">
@@ -420,42 +411,38 @@
                         </div>
                     </div>
 
-                    <!-- 3. Sitemap Panel (UPDATED) -->
                     <div id="sitemap-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Application Sitemap</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             The application's sitemap provides a high-level overview of the app's architecture, showing the relationship between private (user-only) sections and public-facing content.
                         </p>
                         <div class="p-6 bg-gray-50 rounded-lg border">
-                             <img src="Screenshot 2025-10-30 162810.png" 
-                                 alt="Application sitemap diagram" 
-                                 class="w-full rounded-lg border bg-white"
-                                 onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=Sitemap+Diagram+Not+Found'; this.onerror=null;">
+                             <img src="images/Site map.png" 
+                                  alt="Application sitemap diagram" 
+                                  class="w-full rounded-lg border bg-white"
+                                  onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=Sitemap+Diagram+Not+Found'; this.onerror=null;">
                         </div>
                     </div>
 
-                    <!-- 4. Low-Fidelity Panel (was 3) -->
                     <div id="low-fidelity-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Low-Fidelity Wireframes</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             This step was crucial for mapping out the user flow and confirming the layout logic. The actual wireframes, shown below, trace the core user journey—from the splash screen and login, through provider and package selection, to scheduling and the final order summary.
                         </p>
                         <div class="p-6 bg-gray-50 rounded-lg border">
-                            <img src="Screenshot 2025-10-30 162538.png" 
+                            <img src="images/Washy Wash Consumer Based user flow.png" 
                                  alt="Low-fidelity wireframes for Washy Wash" 
                                  class="w-full rounded-lg border bg-white"
                                  onerror="this.src='https://placehold.co/1200x300/f0f9ff/000?text=Low-Fidelity+Wireframes+Not+Found'; this.onerror=null;">
                         </div>
                     </div>
 
-                    <!-- 5. Components Panel (was 4) -->
                     <div id="components-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Component Library</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             A small set of reusable components was designed to ensure visual consistency across the app.
                         </p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <!-- Column 1: Buttons & Inputs -->
                             <div>
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Buttons</h3>
                                 <div class="space-y-4 p-6 bg-gray-50 rounded-lg border">
@@ -463,7 +450,7 @@
                                     <button class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">Secondary Action (Blue)</button>
                                     <button class="w-full py-3 px-6 bg-white text-blue-600 border border-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition">Tertiary / Outline</button>
                                 </div>
-                        
+                            
                                 <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Form Inputs</h3>
                                 <div class="space-y-4 p-6 bg-gray-50 rounded-lg border">
                                     <div>
@@ -477,7 +464,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Column 2: Cards -->
                             <div>
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Cards</h3>
                                 <div class="space-y-4">
@@ -506,12 +492,16 @@
                         </div>
                     </div>
 
-                    <!-- 6. Typography Panel (was 5) -->
                     <div id="typography-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Typography</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             The entire application uses the <strong class="font-semibold">Poppins</strong> font family. This choice provides a clean, modern, and friendly feel, ensuring high legibility across all screen sizes.
                         </p>
+                        
+                        <div class="p-6 bg-gray-50 rounded-lg border mb-8">
+                            <img src="images/Typography.png" alt="Washy Wash Typography" class="w-full rounded-lg border bg-white">
+                        </div>
+                        
                         <div class="p-6 border rounded-lg bg-gray-50">
                             <h3 class="text-2xl font-semibold text-gray-800 mb-6">Type Scale & Usage</h3>
                             
@@ -570,27 +560,8 @@
                 </p>
 
                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Color Palette</h3>
-                <div class="flex flex-wrap gap-4">
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-lg bg-blue-100 border border-blue-200 shadow-md"></div>
-                        <p class="mt-2 font-medium">Primary Blue (Muted)</p>
-                        <p class="text-sm text-gray-600">Calm & Reliable</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-400 border border-orange-200 shadow-md"></div>
-                        <p class="mt-2 font-medium">Accent Gradient</p>
-                        <p class="text-sm text-gray-600">Warm & Actionable</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-lg bg-white border border-gray-200 shadow-md"></div>
-                        <p class="mt-2 font-medium">Neutral (White)</p>
-                        <p class="text-sm text-gray-600">Clean & Uncluttered</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-lg bg-gray-800 border border-gray-900 shadow-md"></div>
-                        <p class="mt-2 font-medium">Text (Dark Grey)</p>
-                        <p class="text-sm text-gray-600">Readable</p>
-                    </div>
+                <div class="p-6 bg-gray-50 rounded-lg border">
+                    <img src="images/color washy wash.png" alt="Washy Wash Color Palette" class="w-full rounded-lg border bg-white">
                 </div>
             </div>
 
@@ -653,82 +624,83 @@
             const screenImage = document.getElementById('screen-image');
             const screenDesc = document.getElementById('screen-desc');
 
+            // UPDATED screenData OBJECT WITH YOUR NEW FILE NAMES
             const screenData = {
                 'welcome': {
-                    img: 'Screenshot 2025-10-30 155717.png',
-                    desc: '(Welcome Screen, far left) The splash screen establishes the "Washy Wash" brand and moves the user forward.'
+                    img: 'images/Splash Screen.png',
+                    desc: 'The splash screen establishes the "Washy Wash" brand and moves the user forward.'
                 },
                 'signup': {
-                    img: 'Screenshot 2025-10-30 155717.png',
-                    desc: '(Sign Up screen, third from left) A simple, standard email/password flow with social login options.'
+                    img: 'images/SIGN UP.png',
+                    desc: 'A simple, standard email/password flow with social login options.'
                 },
                 'login': {
-                    img: 'Screenshot 2025-10-30 155717.png',
-                    desc: '(Login screen, second from left) A clean login screen for returning users.'
+                    img: 'images/Login Page.png',
+                    desc: 'A clean login screen for returning users.'
                 },
                 'home': {
-                    img: 'Screenshot 2025-10-30 155717.png',
-                    desc: '(Home screen, far right) The main dashboard showing services and nearby service providers.'
+                    img: 'images/Home.png',
+                    desc: 'The main dashboard showing services and nearby service providers.'
                 },
                 'provider': {
-                    img: 'Screenshot 2025-10-30 160322.png',
-                    desc: '(Provider Details, left) Shows full details for a selected provider, including services, ratings, and customer reviews.'
+                    img: 'images/Sparkel Clean And Laundary.png',
+                    desc: 'Shows full details for a selected provider, including services, ratings, and customer reviews.'
                 },
                 'package': {
-                    img: 'Screenshot 2025-10-30 155757.png',
-                    desc: '(Package Selection, left/middle) Users can choose simple, bundled packages for different services (Wash, Iron, etc.).'
+                    img: 'images/Booking Wash and fold.png',
+                    desc: 'Users can choose simple, bundled packages for different services (Wash, Iron, etc.).'
                 },
                 'schedule': {
-                    img: 'Screenshot 2025-10-30 155757.png',
-                    desc: '(Date & Time selection, far right) A simple, visual, tap-to-select interface for choosing a date and pickup time.'
+                    img: 'images/date.png',
+                    desc: 'A simple, visual, tap-to-select interface for choosing a date and pickup time.'
                 },
                 'address': {
-                    img: 'Screenshot 2025-10-30 155916.png',
-                    desc: '(Saved Address selection, far left) Repeat users can select a saved address with one tap.'
+                    img: 'images/Address.png',
+                    desc: 'Repeat users can select a saved address with one tap.'
                 },
                 'new_address': {
-                    img: 'Screenshot 2025-10-30 160042.png',
-                    desc: '(Add New Address form, far left) An easy-to-use form with a "Detect My Location" feature.'
+                    img: 'images/New Address.png',
+                    desc: 'An easy-to-use form with a "Detect My Location" feature.'
                 },
                 'custom_load': {
-                    img: 'Screenshot 2025-10-30 160218.png',
-                    desc: '(Custom Load, far right) Allows users to itemize their clothes for custom pricing instead of using a package.'
+                    img: 'images/Custom Load.png',
+                    desc: 'Allows users to itemize their clothes for custom pricing instead of using a package.'
                 },
                 'summary': {
-                    img: 'Screenshot 2025-10-30 155916.png',
-                    desc: '(Order Summary, second from left) The "No-Surprises" summary. Users see a complete, itemized breakdown.'
+                    img: 'images/Order summary.png',
+                    desc: 'The "No-Surprises" summary. Users see a complete, itemized breakdown.'
                 },
                 'payment': {
-                    img: 'Screenshot 2025-10-30 155916.png',
-                    desc: '(Payment Options, third from left) A comprehensive list of payment options, including "Cash on Delivery".'
+                    img: 'images/Payment.png',
+                    desc: 'A comprehensive list of payment options, including "Cash on Delivery".'
                 },
                 'confirmed': {
-                    img: 'Screenshot 2025-10-30 155916.png',
-                    desc: '(Order Confirmed, far right) A clear confirmation screen after successful payment.'
+                    img: 'images/Order confirmation.png',
+                    desc: 'A clear confirmation screen after successful payment.'
                 },
                 'tracking': {
-                    img: 'Screenshot 2025-10-30 160042.png',
-                    desc: '(Order Tracking, second from left) A visual, step-by-step tracker to solve "Black Box Anxiety".'
+                    img: 'images/Track.png',
+                    desc: 'A visual, step-by-step tracker to solve "Black Box Anxiety".'
                 },
                 'feedback': {
-                    img: 'Screenshot 2025-10-30 160042.png',
-                    desc: '(Feedback, third from left) Allows users to rate the service and leave comments after completion.'
+                    img: 'images/Feedback.png',
+                    desc: 'Allows users to rate the service and leave comments after completion.'
                 },
                 'thanks': {
-                    img: 'Screenshot 2025-10-30 160042.png',
-                    desc: '(Thank You, far right) A final screen after submitting feedback.'
+                    img: 'images/Thankyou page.png',
+                    desc: 'A final screen after submitting feedback.'
                 },
                 'profile': {
-                    img: 'Screenshot 2025-10-30 160218.png',
-                    desc: '(Profile Menu, far left) The main user profile and navigation hub.'
+                    img: 'images/Customer Profile.png',
+                    desc: 'The main user profile and navigation hub.'
                 },
                 'history': {
-                    img: 'Screenshot 2025-10-30 160218.png',
-                    desc: '(Order History, second from left) A list of all past and active orders with their status.'
+                    img: 'images/Order History.png',
+                    desc: 'A list of all past and active orders with their status.'
                 },
                 'chat': {
-                    img: 'Screenshot 2025-10-30 160218.png',
-                    desc: '(Chat, third from left) A built-in chat feature for users to communicate with support or providers.'
+                    img: 'images/Chat Support.png',
+                    desc: 'A built-in chat feature for users to communicate with support or providers.'
                 }
             };
 
