@@ -404,19 +404,13 @@
                         </p>
                         <div class="space-y-6">
                             <div class="p-6 bg-gray-50 rounded-lg border">
-                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 1: Onboarding to Booking</h3>
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-4"> Onboarding to Order Confirmation</h3>
                                 <img src="images/Washy Wash Consumer Based user flow.png" 
                                      alt="User flow for onboarding and booking" 
                                      class="w-full rounded-lg border bg-white"
                                      onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=User+Flow+Not+Found'; this.onerror=null;">
                             </div>
-                            <div class="p-6 bg-gray-50 rounded-lg border">
-                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 2: Payment & Confirmation Logic</h3>
-                                <img src="images/Payment.png" 
-                                     alt="User flow for payment logic" 
-                                     class="w-full max-w-3xl mx-auto rounded-lg border bg-white"
-                                     onerror="this.src='https://placehold.co/800x600/f0f9ff/000?text=Payment+Flow+Not+Found'; this.onerror=null;">
-                            </div>
+                            
                         </div>
                     </div>
 
@@ -781,6 +775,10 @@
                 }
             };
 
+            // --- THIS IS THE FIX ---
+            // We set costChart to null initially.
+            let costChart = null;
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     
@@ -792,6 +790,60 @@
                     
                     const targetPanel = document.getElementById(tab.dataset.tab + '-panel');
                     targetPanel.style.display = 'block';
+
+                    // --- CHART.JS FIX ---
+                    // Now, we ONLY run the chart code if the 'impact' tab is clicked
+                    // and the chart hasn't been created yet (!costChart).
+                    if (tab.dataset.tab === 'impact' && !costChart) {
+                        const ctx = document.getElementById('costChart').getContext('2d');
+                        costChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Small Load', 'Medium Load', 'Large Load'],
+                                datasets: [{
+                                    label: 'Package Cost (in ₹)',
+                                    data: [300, 450, 600],
+                                    backgroundColor: [
+                                        'rgba(59, 130, 246, 0.7)',
+                                        'rgba(2, 132, 199, 0.7)',
+                                        'rgba(14, 165, 233, 0.7)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(59, 130, 246, 1)',
+                                        'rgba(2, 132, 199, 1)',
+                                        'rgba(14, 165, 233, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function(value) {
+                                                return '₹' + value;
+                                            }
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.dataset.label + ': ₹' + context.parsed.y;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
                 });
             });
 
@@ -862,60 +914,11 @@
                 });
             }
 
-            const ctx = document.getElementById('costChart').getContext('2d');
-            const costChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Small Load', 'Medium Load', 'Large Load'],
-                    datasets: [{
-                        label: 'Package Cost (in ₹)',
-                        data: [300, 450, 600],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.7)',
-                            'rgba(2, 132, 199, 0.7)',
-                            'rgba(14, 165, 233, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(2, 132, 199, 1)',
-                            'rgba(14, 165, 233, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '₹' + value;
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ₹' + context.parsed.y;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            // --- REMOVED CHART.JS CODE FROM HERE ---
+            // It is now inside the main tab click listener.
         });
     </script>
 
 </body>
 </html>
-
-
-
 
