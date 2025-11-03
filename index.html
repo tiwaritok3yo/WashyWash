@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Chosen Palette: "Clean & Fresh" (Light Muted Blue, Warm Orange/Yellow Gradient, Neutrals) -->
+    <!-- Application Structure Plan: Designed a 6-tab SPA ("Overview", "The Problem", "The People", "The Solution", "The Design", "The Impact"). This "Case Study Explorer" model was chosen over a linear report to empower users (recruiters, peers) to non-linearly explore the case study. It prioritizes user-driven discovery, allowing them to jump directly to "The Solution" (the interactive flow) or "The People" (the personas) without scrolling, enhancing usability and engagement. -->
+    <!-- Visualization & Content Choices: 1. Personas -> Goal: Compare -> Method: HTML Cards + JS Toggle -> Interaction: Click buttons (Priya/Amit/etc) to show/hide respective persona card -> Justification: Allows direct comparison and deep-dives without cluttering the UI. 2. App Flow -> Goal: Organize/Inform -> Method: HTML/JS Interactive Gallery -> Interaction: Click screen name (e.g., "Login") to update a central image viewer and description panel -> Justification: Translates a static 10-screen grid into an interactive, step-by-step user flow simulation. 3. Pricing -> Goal: Compare -> Method: Bar Chart -> Interaction: View chart -> Justification: Visually quantifies the "Budget-Conscious" insight and "Package" choices. -> Library: Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -320,6 +325,7 @@
 
             <div id="solution-panel" class="tab-panel">
                 
+                <!-- New Sub-Tab Navigation -->
                 <nav id="solution-sub-nav" class="flex flex-wrap border-b border-gray-200 pb-2 -mt-4 -mx-4 px-4">
                     <button class="sub-tab-btn active" data-subtab="high-fidelity">High-Fidelity Flow</button>
                     <button class="sub-tab-btn inactive" data-subtab="user-flow">User Flow</button>
@@ -329,8 +335,10 @@
                     <button class="sub-tab-btn inactive" data-subtab="typography">Typography</button>
                 </nav>
 
+                <!-- Sub-Tab Panels -->
                 <main id="solution-sub-panels">
                     
+                    <!-- 1. High-Fidelity Panel (Existing Content) -->
                     <div id="high-fidelity-panel" class="sub-tab-panel" style="display:block;">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">The Solution: An Interactive Flow</h2>
                         <p class="text-lg text-gray-700 mb-8">
@@ -388,6 +396,7 @@
                         </div>
                     </div>
 
+                    <!-- 2. User Flow Panel (NEW) -->
                     <div id="user-flow-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">User Flow</h2>
                         <p class="text-lg text-gray-700 mb-8">
@@ -411,6 +420,7 @@
                         </div>
                     </div>
 
+                    <!-- 3. Sitemap Panel (UPDATED) -->
                     <div id="sitemap-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Application Sitemap</h2>
                         <p class="text-lg text-gray-700 mb-8">
@@ -424,25 +434,88 @@
                         </div>
                     </div>
 
+                    <!-- 4. Low-Fidelity Panel (UPDATED WITH GRID) -->
                     <div id="low-fidelity-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Low-Fidelity Wireframes</h2>
                         <p class="text-lg text-gray-700 mb-8">
-                            This step was crucial for mapping out the user flow and confirming the layout logic. The actual wireframes, shown below, trace the core user journey—from the splash screen and login, through provider and package selection, to scheduling and the final order summary.
+                            This step was crucial for mapping out the user flow and confirming the layout logic. The wireframes below trace the core user journey, from selecting a service to tracking the order and providing feedback.
                         </p>
-                        <div class="p-6 bg-gray-50 rounded-lg border">
-                            <img src="images/Washy Wash Consumer Based user flow.png" 
-                                 alt="Low-fidelity wireframes for Washy Wash" 
-                                 class="w-full rounded-lg border bg-white"
-                                 onerror="this.src='https://placehold.co/1200x300/f0f9ff/000?text=Low-Fidelity+Wireframes+Not+Found'; this.onerror=null;">
+                        
+                        <!-- New Wireframe Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50 rounded-lg border">
+                            
+                            <!-- Image 1 -->
+                            <div>
+                                <img src="images/Sparkel Clean And Laundary LF.png" alt="Wireframe: Provider Details" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">1. Provider Details</p>
+                            </div>
+                            
+                            <!-- Image 2 -->
+                            <div>
+                                <img src="images/Booking dry Clean LF.png" alt="Wireframe: Booking Dry Clean" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">2. Booking Service</p>
+                            </div>
+
+                            <!-- Image 3 -->
+                            <div>
+                                <img src="images/date LF.png" alt="Wireframe: Select Date" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">3. Select Date</p>
+                            </div>
+
+                            <!-- Image 4 -->
+                            <div>
+                                <img src="images/Address LF.png" alt="Wireframe: Address" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">4. Select Address</p>
+                            </div>
+
+                            <!-- Image 5 -->
+                            <div>
+                                <img src="images/Order summary LF.png" alt="Wireframe: Order Summary" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">5. Order Summary</p>
+                            </div>
+
+                            <!-- Image 6 -->
+                            <div>
+                                <img src="images/Payment LF.png" alt="Wireframe: Payment" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">6. Payment</p>
+                            </div>
+
+                            <!-- Image 7 -->
+                            <div>
+                                <img src="images/Order confirmation LF.png" alt="Wireframe: Order Confirmation" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">7. Order Confirmation</p>
+                            </div>
+
+                            <!-- Image 8 -->
+                            <div>
+                                <img src="images/Track LF.png" alt="Wireframe: Order Tracking" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">8. Order Tracking</p>
+                            </div>
+
+                            <!-- Image 9 -->
+                            <div>
+                                <img src="images/Feedback LF.png" alt="Wireframe: Feedback" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">9. Feedback</p>
+                            </div>
+
+                            <!-- Image 10 -->
+                            <div>
+                                <img src="images/Thankyou page LF.png" alt="Wireframe: Thank You Page" class="w-full rounded-lg border bg-white shadow-sm transition-transform duration-300 hover:scale-105" onerror="this.src='https://placehold.co/400x300/f0f9ff/000?text=LF+Image+Missing'; this.onerror=null;">
+                                <p class="text-center text-sm text-gray-600 mt-2">10. Thank You</p>
+                            </div>
+
                         </div>
                     </div>
 
+
+                    <!-- 5. Components Panel (was 4) -->
                     <div id="components-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Component Library</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             A small set of reusable components was designed to ensure visual consistency across the app.
                         </p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Column 1: Buttons & Inputs -->
                             <div>
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Buttons</h3>
                                 <div class="space-y-4 p-6 bg-gray-50 rounded-lg border">
@@ -464,6 +537,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Column 2: Cards -->
                             <div>
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Cards</h3>
                                 <div class="space-y-4">
@@ -492,14 +566,16 @@
                         </div>
                     </div>
 
+                    <!-- 6. Typography Panel (was 5) -->
                     <div id="typography-panel" class="sub-tab-panel">
                         <h2 class="text-3xl font-bold text-gray-800 mb-4">Typography</h2>
                         <p class="text-lg text-gray-700 mb-8">
                             The entire application uses the <strong class="font-semibold">Poppins</strong> font family. This choice provides a clean, modern, and friendly feel, ensuring high legibility across all screen sizes.
                         </p>
                         
+                        <!-- ADDED YOUR TYPOGRAPHY IMAGE HERE -->
                         <div class="p-6 bg-gray-50 rounded-lg border mb-8">
-                            <img src="images/Typography.png" alt="Washy Wash Typography" class="w-full rounded-lg border bg-white">
+                            <img src="images/Typography.png" alt="Washy Wash Typography" class="w-full rounded-lg border bg-white" onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=Typography+Image+Missing'; this.onerror=null;">
                         </div>
                         
                         <div class="p-6 border rounded-lg bg-gray-50">
@@ -559,9 +635,10 @@
                     The final design is built on a foundation of trust and ease, using a clean, fresh, and modern aesthetic.
                 </p>
 
+                <!-- REPLACED CSS BLOCKS WITH YOUR IMAGE -->
                 <h3 class="text-2xl font-semibold text-gray-800 mb-4">Color Palette</h3>
                 <div class="p-6 bg-gray-50 rounded-lg border">
-                    <img src="images/color washy wash.png" alt="Washy Wash Color Palette" class="w-full rounded-lg border bg-white">
+                    <img src="images/color washy wash.png" alt="Washy Wash Color Palette" class="w-full rounded-lg border bg-white" onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=Color+Palette+Missing'; this.onerror=null;">
                 </div>
             </div>
 
@@ -624,7 +701,7 @@
             const screenImage = document.getElementById('screen-image');
             const screenDesc = document.getElementById('screen-desc');
 
-            // UPDATED screenData OBJECT WITH YOUR NEW FILE NAMES
+            // UPDATED screenData OBJECT
             const screenData = {
                 'welcome': {
                     img: 'images/Splash Screen.png',
@@ -639,7 +716,7 @@
                     desc: 'A clean login screen for returning users.'
                 },
                 'home': {
-                    img: 'images/home.png',
+                    img: 'images/Home.png',
                     desc: 'The main dashboard showing services and nearby service providers.'
                 },
                 'provider': {
