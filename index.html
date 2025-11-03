@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Washy Wash - Interactive Case Study</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: "Clean & Fresh" (Light Muted Blue, Warm Orange/Yellow Gradient, Neutrals) -->
+    <!-- Application Structure Plan: Designed a 6-tab SPA ("Overview", "The Problem", "The People", "The Solution", "The Design", "The Impact"). This "Case Study Explorer" model was chosen over a linear report to empower users (recruiters, peers) to non-linearly explore the case study. It prioritizes user-driven discovery, allowing them to jump directly to "The Solution" (the interactive flow) or "The People" (the personas) without scrolling, enhancing usability and engagement. -->
+    <!-- Visualization & Content Choices: 1. Personas -> Goal: Compare -> Method: HTML Cards + JS Toggle -> Interaction: Click buttons (Priya/Amit/etc) to show/hide respective persona card -> Justification: Allows direct comparison and deep-dives without cluttering the UI. 2. App Flow -> Goal: Organize/Inform -> Method: HTML/JS Interactive Gallery -> Interaction: Click screen name (e.g., "Login") to update a central image viewer and description panel -> Justification: Translates a static 10-screen grid into an interactive, step-by-step user flow simulation. 3. Pricing -> Goal: Compare -> Method: Bar Chart -> Interaction: View chart -> Justification: Visually quantifies the "Budget-Conscious" insight and "Package" choices. -> Library: Chart.js. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8fafc;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            margin-right: 0.5rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            border-bottom: 0;
+        }
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #2563eb;
+            border-color: #e5e7eb;
+            border-bottom: 1px solid #ffffff;
+            position: relative;
+            top: 1px;
+        }
+        .tab-btn.inactive {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+        .tab-btn.inactive:hover {
+            background-color: #e5e7eb;
+        }
+        .tab-panel {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0 0.5rem 0.5rem 0.5rem;
+            padding: 2rem;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .persona-btn, .screen-btn {
+            transition: all 0.2s ease;
+        }
+        .persona-btn.active, .screen-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+        }
+        .persona-btn.inactive, .screen-btn.inactive {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .persona-btn.inactive:hover, .screen-btn.inactive:hover {
+            background-color: #e5e7eb;
+        }
+        
+        /* New Sub-Tab Styles */
+        .sub-tab-btn {
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .sub-tab-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        .sub-tab-btn.inactive {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+        .sub-tab-btn.inactive:hover {
+            background-color: #e5e7eb;
+        }
+        .sub-tab-panel {
+            display: none;
+            padding: 2rem 0 0 0;
+            animation: fadeIn 0.5s;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .stat-card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        
+        <header class="mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-600">Washy Wash</h1>
+            <p class="text-xl md:text-2xl text-gray-600 mt-2">An Interactive UI/UX Case Study</p>
+        </header>
+
+        <nav id="tab-nav" class="flex flex-wrap border-b border-gray-200">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn inactive" data-tab="problem">The Problem</button>
+            <button class="tab-btn inactive" data-tab="people">The People</button>
+            <button class="tab-btn inactive" data-tab="solution">The Solution</button>
+            <button class="tab-btn inactive" data-tab="design">The Design</button>
+            <button class="tab-btn inactive" data-tab="impact">The Impact</button>
+        </nav>
+
+        <main id="content-panels">
+            
+            <div id="overview-panel" class="tab-panel" style="display:block;">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Project Overview</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    This project is a conceptual design for "Washy Wash," a mobile application created to bridge the gap between time-poor urban residents and reliable local laundry services. This interactive breakdown walks you through the entire design process, from initial problem to final solution.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="stat-card">
+                        <span class="text-5xl">⏳</span>
+                        <h3 class="text-xl font-semibold mt-4 mb-2">Timeline</h3>
+                        <p class="text-3xl font-bold text-blue-600">4 Weeks</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="text-5xl">🧑‍💻</span>
+                        <h3 class="text-xl font-semibold mt-4 mb-2">My Role</h3>
+                        <p class="text-3xl font-bold text-blue-600">Lead UI/UX Designer</p>
+                    </div>
+                    <div class="stat-card">
+                        <span class="text-5xl">📱</span>
+                        <h3 class="text-xl font-semibold mt-4 mb-2">Platform</h3>
+                        <p class="text-3xl font-bold text-blue-600">iOS & Android</p>
+                    </div>
+                </div>
+                <div class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-blue-800 mb-4">Core Project Goals</h3>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-blue-700">
+                        <li><strong class="font-semibold">Build Trust:</strong> Create a system based on verified providers, transparent pricing, and real-time order tracking.</li>
+                        <li><strong class="font-semibold">Save Time:</strong> Design an intuitive, friction-free booking process that takes less than two minutes.</li>
+                        <li><strong class="font-semibold">Ensure Reliability:</strong> Offer a dependable scheduling system for both pickup and delivery.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="problem-panel" class="tab-panel">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">The Problem of the "Chair-drobe"</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    Our story begins with a familiar sight: the "chair-drobe." That corner of a room where clothes exist in a limbo between clean and dirty. For students in hostels, young professionals in PGs, and tenants in new flats across India's bustling Tier 1 and 2 cities, this isn't just a meme—it's a weekly reality.
+                </p>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    We identified a clear and present problem: **a deep disconnect between a generation of time-poor, tech-savvy urban residents and the fragmented, often unreliable local laundry and ironing services.**
+                </p>
+                <div class="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-yellow-800 mb-3">The Objective</h3>
+                    <p class="text-lg text-yellow-700">
+                        Design a mobile application to address the unavailability of reliable, on-demand laundry and ironing services. We weren't just building an app; we were creating a bridge to a hassle-free life.
+                    </p>
+                </div>
+            </div>
+
+            <div id="people-panel" class="tab-panel">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">The People: User Research</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    To build a solution, we first had to understand the people we were building it for. User interviews with students and working professionals revealed four key pain points.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="p-6 bg-gray-100 rounded-lg border">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">⌛ Time is Gold</h4>
+                        <p class="text-gray-700">"I work 10 hours a day. I don't have time to drop off laundry."</p>
+                    </div>
+                    <div class="p-6 bg-gray-100 rounded-lg border">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">💔 Trust Deficit</h4>
+                        <p class="text-gray-700">"The local *dhobi* lost my favourite shirt. I never got it back."</p>
+                    </div>
+                    <div class="p-6 bg-gray-100 rounded-lg border">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">❓ Black Box Anxiety</h4>
+                        <p class="text-gray-700">"I have no idea when my clothes will be back. I just have to wait and call."</p>
+                    </div>
+                    <div class="p-6 bg-gray-100 rounded-lg border">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">💸 Budget-Conscious</h4>
+                        <p class="text-gray-700">"I'm a student. I can't afford expensive 'premium' services, but I'll pay for reliability."</p>
+                    </div>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mb-4">Meet Our Personas</h3>
+                <p class="text-lg text-gray-700 mb-6">
+                    From these insights, six clear personas emerged. Click to learn about them.
+                </p>
+                
+                <div id="persona-nav" class="flex flex-wrap gap-4 mb-6">
+                    <button class="persona-btn active text-lg font-semibold py-3 px-6 rounded-lg" data-persona="priya">👩‍🎓 Priya, The Student</button>
+                    <button class="persona-btn inactive text-lg font-semibold py-3 px-6 rounded-lg" data-persona="amit">💼 Amit, The Professional</button>
+                    <button class="persona-btn inactive text-lg font-semibold py-3 px-6 rounded-lg" data-persona="couple">👩‍❤️‍👨 Raj & Neha, The Couple</button>
+                    <button class="persona-btn inactive text-lg font-semibold py-3 px-6 rounded-lg" data-persona="karan">🏋️‍♂️ Karan, The Fitness Enthusiast</button>
+                    <button class="persona-btn inactive text-lg font-semibold py-3 px-6 rounded-lg" data-persona="aarav">🛵 Aarav, The Gig Worker</button>
+                    <button class="persona-btn inactive text-lg font-semibold py-3 px-6 rounded-lg" data-persona="meera">👩‍⚕️ Meera, The Medical Intern</button>
+                </div>
+
+                <div id="persona-content">
+                    
+                    <div id="priya-card" class="persona-card bg-blue-50 border border-blue-200 rounded-lg p-6" data-persona="priya" style="display:block;">
+                        <h4 class="text-3xl font-bold text-blue-800">Priya, The Student</h4>
+                        <p class="text-lg text-blue-700 mt-2"><b>Age:</b> 20 | <b>Lives:</b> In a hostel (Tier 2 city)</p>
+                        <p class="text-md text-blue-700 mt-4"><b>Bio:</b> A busy engineering student balancing classes, assignments, and a social life.</p>
+                        <hr class="my-4 border-blue-200">
+                        <h5 class="text-xl font-semibold text-blue-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-blue-700 space-y-1">
+                            <li>Limited budget</li>
+                            <li>Needs clothes back for the weekend</li>
+                            <li>Hates the hassle of washing</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-blue-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-blue-700 font-medium">"I just want my clothes clean, folded, and back before my Saturday night out, without it costing a bomb."</p>
+                    </div>
+                    
+                    <div id="amit-card" class="persona-card bg-green-50 border border-green-200 rounded-lg p-6" data-persona="amit" style="display:none;">
+                        <h4 class="text-3xl font-bold text-green-800">Amit, The Professional</h4>
+                        <p class="text-lg text-green-700 mt-2"><b>Age:</b> 27 | <b>Lives:</b> In a PG (Tier 1 city)</p>
+                        <p class="text-md text-green-700 mt-4"><b>Bio:</b> A junior consultant whose work is demanding and appearance is important.</p>
+                        <hr class="my-4 border-green-200">
+                        <h5 class="text-xl font-semibold text-green-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-green-700 space-y-1">
+                            <li>Time-poor; works long hours</li>
+                            <li>Needs high-quality ironing for work shirts</li>
+                            <li>Willing to pay for speed and quality</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-green-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-green-700 font-medium">"I need a 'set it and forget it' service. I want my work clothes perfectly ironed and delivered on time, every time."</p>
+                    </div>
+                    
+                    <div id="couple-card" class="persona-card bg-purple-50 border border-purple-200 rounded-lg p-6" data-persona="couple" style="display:none;">
+                        <h4 class="text-3xl font-bold text-purple-800">Raj & Neha, The Young Couple</h4>
+                        <p class="text-lg text-purple-700 mt-2"><b>Age:</b> 28 & 29 | <b>Lives:</b> In a 1BHK Flat (Tier 1 city)</p>
+                        <p class="text-md text-purple-700 mt-4"><b>Bio:</b> Both are working IT professionals. They just moved in together and are trying to manage work and home life.</p>
+                        <hr class="my-4 border-purple-200">
+                        <h5 class="text-xl font-semibold text-purple-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-purple-700 space-y-1">
+                            <li>No time for laundry on weekdays.</li>
+                            <li>Weekends are for relaxing, not chores.</li>
+                            <li>Need to separate delicates (Neha) from regular clothes (Raj).</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-purple-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-purple-700 font-medium">"We need a reliable service that can handle our bulk weekly laundry and also take special care of expensive or delicate items."</p>
+                    </div>
+
+                    <div id="karan-card" class="persona-card bg-orange-50 border border-orange-200 rounded-lg p-6" data-persona="karan" style="display:none;">
+                        <h4 class="text-3xl font-bold text-orange-800">Karan, The Fitness Enthusiast</h4>
+                        <p class="text-lg text-orange-700 mt-2"><b>Age:</b> 23 | <b>Lives:</b> In a PG (Tier 1 city)</p>
+                        <p class="text-md text-orange-700 mt-4"><b>Bio:</b> A gym trainer and fitness model. He goes through 2-3 sets of gym clothes every day.</p>
+                        <hr class="my-4 border-orange-200">
+                        <h5 class="text-xl font-semibold text-orange-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-orange-700 space-y-1">
+                            <li>Gym clothes smell if not washed immediately.</li>
+                            <li>Washing small loads daily is inefficient.</li>
+                            <li>Needs quick turnaround for his favourite workout gear.</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-orange-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-orange-700 font-medium">"I need a fast, affordable way to wash small loads of gym wear every other day. Hygiene is non-negotiable."</p>
+                    </div>
+
+                    <div id="aarav-card" class="persona-card bg-red-50 border border-red-200 rounded-lg p-6" data-persona="aarav" style="display:none;">
+                        <h4 class="text-3xl font-bold text-red-800">Aarav, The Gig Worker</h4>
+                        <p class="text-lg text-red-700 mt-2"><b>Age:</b> 25 | <b>Lives:</b> In a shared flat (Tier 2 city)</p>
+                        <p class="text-md text-red-700 mt-4"><b>Bio:</b> Works as a food delivery driver. His income and schedule are unpredictable.</p>
+                        <hr class="my-4 border-red-200">
+                        <h5 class="text-xl font-semibold text-red-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-red-700 space-y-1">
+                            <li>Irregular income makes subscription services difficult.</li>
+                            <li>Not always home for scheduled pickups/deliveries.</li>
+                            <li>Prefers to pay with cash (COD).</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-red-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-red-700 font-medium">"I need a service that is flexible. I want to book when I have money and be able to pay with cash on delivery."</p>
+                    </div>
+
+                    <div id="meera-card" class="persona-card bg-cyan-50 border border-cyan-200 rounded-lg p-6" data-persona="meera" style="display:none;">
+                        <h4 class="text-3xl font-bold text-cyan-800">Meera, The Medical Intern</h4>
+                        <p class="text-lg text-cyan-700 mt-2"><b>Age:</b> 24 | <b>Lives:</b> In a hostel near the hospital (Tier 1 city)</p>
+                        <p class="text-md text-cyan-700 mt-4"><b>Bio:</b> Works 80-hour weeks at the hospital. Barely has time to sleep, let alone do laundry.</p>
+                        <hr class="my-4 border-cyan-200">
+                        <h5 class="text-xl font-semibold text-cyan-800 mb-2">Pain Points</h5>
+                        <ul class="list-disc list-inside text-cyan-700 space-y-1">
+                            <li>Extremely long and unpredictable hours.</li>
+                            <li>Needs her scrubs and lab coats hygienically cleaned.</li>
+                            <li>High-stress job; cannot deal with unreliable service.</li>
+                        </ul>
+                        <h5 class="text-xl font-semibold text-cyan-800 mt-4 mb-2">Goal</h5>
+                        <p class="text-cyan-700 font-medium">"I need a service that is 100% reliable. I want to schedule a pickup from the hospital and get clean, hygienic clothes back without any fuss."</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="solution-panel" class="tab-panel">
+                
+                <!-- New Sub-Tab Navigation -->
+                <nav id="solution-sub-nav" class="flex flex-wrap border-b border-gray-200 pb-2 -mt-4 -mx-4 px-4">
+                    <button class="sub-tab-btn active" data-subtab="high-fidelity">High-Fidelity Flow</button>
+                    <button class="sub-tab-btn inactive" data-subtab="user-flow">User Flow</button>
+                    <button class="sub-tab-btn inactive" data-subtab="sitemap">Sitemap</button>
+                    <button class="sub-tab-btn inactive" data-subtab="low-fidelity">Low-Fidelity</button>
+                    <button class="sub-tab-btn inactive" data-subtab="components">Components</button>
+                    <button class="sub-tab-btn inactive" data-subtab="typography">Typography</button>
+                </nav>
+
+                <!-- Sub-Tab Panels -->
+                <main id="solution-sub-panels">
+                    
+                    <!-- 1. High-Fidelity Panel (Existing Content) -->
+                    <div id="high-fidelity-panel" class="sub-tab-panel" style="display:block;">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">The Solution: An Interactive Flow</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            Here is the high-fidelity solution. Click through the steps to see how the app addresses the user's needs in one friction-free flow, from onboarding to payment and beyond.
+                        </p>
+                        
+                        <div class="flex flex-col md:flex-row gap-8">
+                            
+                            <div class="w-full md:w-1/3">
+                                <h3 class="text-2xl font-semibold mb-4">App Flow Steps</h3>
+                                <div id="screen-nav" class="flex flex-col space-y-2">
+                                    <b class="text-lg text-gray-500 mt-2">Step 1: Onboarding</b>
+                                    <button class="screen-btn active text-left p-3 rounded-lg" data-screen="welcome">Welcome Screen</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="signup">Sign Up</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="login">Login</button>
+                                    
+                                    <b class="text-lg text-gray-500 mt-4">Step 2: Browsing</b>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="home">Home</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="provider">Provider Details</button>
+                                    
+                                    <b class="text-lg text-gray-500 mt-4">Step 3: Booking</b>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="package">Choose Package</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="schedule">Schedule Date & Time</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="address">Select Address</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="new_address">Add New Address</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="custom_load">Custom Load</button>
+
+                                    <b class="text-lg text-gray-500 mt-4">Step 4: Checkout</b>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="summary">Order Summary</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="payment">Payment Options</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="confirmed">Order Confirmed</button>
+
+                                    <b class="text-lg text-gray-500 mt-4">Step 5: Post-Order</b>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="tracking">Order Tracking</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="feedback">Feedback</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="thanks">Thank You</button>
+
+                                    <b class="text-lg text-gray-500 mt-4">Step 6: Core App Features</b>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="profile">Profile Menu</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="history">Order History</button>
+                                    <button class="screen-btn inactive text-left p-3 rounded-lg" data-screen="chat">Chat</button>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full md:w-2/3 flex flex-col items-center">
+                                <div class="w-full max-w-sm bg-gray-900 rounded-3xl p-4 shadow-2xl">
+                                    <img id="screen-image" src="Screenshot 2025-10-30 155717.png"
+                                         onerror="this.src='https://placehold.co/390x844/f0f9ff/000?text=Image+Not+Found'; this.onerror=null;"
+                                         alt="App screen" class="w-full rounded-2xl">
+                                </div>
+                                <div id="screen-desc" class="w-full max-w-sm mt-6 text-center text-lg text-gray-700 bg-gray-100 p-4 rounded-lg">
+                                    (Welcome Screen, far left) The splash screen establishes the "Washy Wash" brand and moves the user forward.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. User Flow Panel (NEW) -->
+                    <div id="user-flow-panel" class="sub-tab-panel">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">User Flow</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            This flow chart details the complete user journey, mapping out the logic and decision points from the moment the app is opened to a completed order and payment.
+                        </p>
+                        <div class="space-y-6">
+                            <div class="p-6 bg-gray-50 rounded-lg border">
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 1: Onboarding to Booking</h3>
+                                <img src="Screenshot 2025-10-30 162743.png" 
+                                     alt="User flow for onboarding and booking" 
+                                     class="w-full rounded-lg border bg-white"
+                                     onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=User+Flow+Not+Found'; this.onerror=null;">
+                            </div>
+                            <div class="p-6 bg-gray-50 rounded-lg border">
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Part 2: Payment & Confirmation Logic</h3>
+                                <img src="Screenshot 2025-10-30 162748.png" 
+                                     alt="User flow for payment logic" 
+                                     class="w-full max-w-3xl mx-auto rounded-lg border bg-white"
+                                     onerror="this.src='https://placehold.co/800x600/f0f9ff/000?text=Payment+Flow+Not+Found'; this.onerror=null;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Sitemap Panel (UPDATED) -->
+                    <div id="sitemap-panel" class="sub-tab-panel">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Application Sitemap</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            The application's sitemap provides a high-level overview of the app's architecture, showing the relationship between private (user-only) sections and public-facing content.
+                        </p>
+                        <div class="p-6 bg-gray-50 rounded-lg border">
+                             <img src="Screenshot 2025-10-30 162810.png" 
+                                 alt="Application sitemap diagram" 
+                                 class="w-full rounded-lg border bg-white"
+                                 onerror="this.src='https://placehold.co/1200x800/f0f9ff/000?text=Sitemap+Diagram+Not+Found'; this.onerror=null;">
+                        </div>
+                    </div>
+
+                    <!-- 4. Low-Fidelity Panel (was 3) -->
+                    <div id="low-fidelity-panel" class="sub-tab-panel">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Low-Fidelity Wireframes</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            This step was crucial for mapping out the user flow and confirming the layout logic. The actual wireframes, shown below, trace the core user journey—from the splash screen and login, through provider and package selection, to scheduling and the final order summary.
+                        </p>
+                        <div class="p-6 bg-gray-50 rounded-lg border">
+                            <img src="Screenshot 2025-10-30 162538.png" 
+                                 alt="Low-fidelity wireframes for Washy Wash" 
+                                 class="w-full rounded-lg border bg-white"
+                                 onerror="this.src='https://placehold.co/1200x300/f0f9ff/000?text=Low-Fidelity+Wireframes+Not+Found'; this.onerror=null;">
+                        </div>
+                    </div>
+
+                    <!-- 5. Components Panel (was 4) -->
+                    <div id="components-panel" class="sub-tab-panel">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Component Library</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            A small set of reusable components was designed to ensure visual consistency across the app.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Column 1: Buttons & Inputs -->
+                            <div>
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Buttons</h3>
+                                <div class="space-y-4 p-6 bg-gray-50 rounded-lg border">
+                                    <button class="w-full py-3 px-6 bg-gradient-to-br from-orange-400 to-yellow-400 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition">Primary Action (Gradient)</button>
+                                    <button class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">Secondary Action (Blue)</button>
+                                    <button class="w-full py-3 px-6 bg-white text-blue-600 border border-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition">Tertiary / Outline</button>
+                                </div>
+                        
+                                <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Form Inputs</h3>
+                                <div class="space-y-4 p-6 bg-gray-50 rounded-lg border">
+                                    <div>
+                                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input type="text" id="name" placeholder="john@gmail.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label for="pass" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                        <input type="password" id="pass" placeholder="Enter Password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 2: Cards -->
+                            <div>
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Cards</h3>
+                                <div class="space-y-4">
+                                    <p class="text-gray-600">Package Card</p>
+                                    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                        <div class="flex justify-between items-center">
+                                            <h4 class="text-2xl font-bold text-gray-800">Small Load</h4>
+                                            <p class="text-2xl font-bold text-gray-800">₹ 300</p>
+                                        </div>
+                                        <p class="text-gray-600 mt-2">Upto 5Kg Of Clothes. perfect for Weekly Laundary</p>
+                                    </div>
+                            
+                                    <p class="text-gray-600 mt-4">Persona Card</p>
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                        <h4 class="text-3xl font-bold text-blue-800">Priya, The Student</h4>
+                                        <p class="text-lg text-blue-700 mt-2"><b>Age:</b> 20 | <b>Lives:</b> In a hostel</p>
+                                        <hr class="my-4 border-blue-200">
+                                        <h5 class="text-xl font-semibold text-blue-800 mb-2">Pain Points</h5>
+                                        <ul class="list-disc list-inside text-blue-700 space-y-1">
+                                            <li>Limited budget</li>
+                                            <li>Needs clothes back for the weekend</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Typography Panel (was 5) -->
+                    <div id="typography-panel" class="sub-tab-panel">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Typography</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            The entire application uses the <strong class="font-semibold">Poppins</strong> font family. This choice provides a clean, modern, and friendly feel, ensuring high legibility across all screen sizes.
+                        </p>
+                        <div class="p-6 border rounded-lg bg-gray-50">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-6">Type Scale & Usage</h3>
+                            
+                            <div class="space-y-6">
+                                
+                                <div>
+                                    <p class="text-sm text-gray-500 uppercase font-medium">Main Font Family</p>
+                                    <p class="text-3xl" style="font-family: Poppins, sans-serif; font-weight: 400;">Poppins</p>
+                                </div>
+                                
+                                <hr>
+                                
+                                <div class="flex flex-col md:flex-row gap-6">
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-500 uppercase font-medium">Headings (e.g., "Our Services")</p>
+                                        <p class="text-3xl" style="font-family: Poppins, sans-serif; font-weight: 700;">Poppins Bold (32px)</p>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-500 uppercase font-medium">Sub-Headings (e.g., Provider Name)</p>
+                                        <p class="text-2xl" style="font-family: Poppins, sans-serif; font-weight: 700;">Poppins Bold (22px)</p>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+
+                                <div class="flex flex-col md:flex-row gap-6">
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-500 uppercase font-medium">Body / Regular Text</p>
+                                        <p class="text-xl" style="font-family: Poppins, sans-serif; font-weight: 400;">Poppins Regular (20px - 24px)</p>
+                                        <p class="text-base text-gray-600" style="font-family: Poppins, sans-serif; font-weight: 400;">(Used for Search Bar, Card descriptions, etc.)</p>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-500 uppercase font-medium">Filter Button Text</p>
+                                        <p class="text-xl" style="font-family: Poppins, sans-serif; font-weight: 200;">Poppins Extra Light (20px)</p>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div>
+                                    <p class="text-sm text-gray-500 uppercase font-medium">Navigation Bar Text</p>
+                                    <p class="text-sm" style="font-family: Poppins, sans-serif; font-weight: 100;">Poppins Thin (12px)</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+
+            <div id="design-panel" class="tab-panel">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">The Design: Branding & UI</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    The final design is built on a foundation of trust and ease, using a clean, fresh, and modern aesthetic.
+                </p>
+
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Color Palette</h3>
+                <div class="flex flex-wrap gap-4">
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-lg bg-blue-100 border border-blue-200 shadow-md"></div>
+                        <p class="mt-2 font-medium">Primary Blue (Muted)</p>
+                        <p class="text-sm text-gray-600">Calm & Reliable</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-400 border border-orange-200 shadow-md"></div>
+                        <p class="mt-2 font-medium">Accent Gradient</p>
+                        <p class="text-sm text-gray-600">Warm & Actionable</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-lg bg-white border border-gray-200 shadow-md"></div>
+                        <p class="mt-2 font-medium">Neutral (White)</p>
+                        <p class="text-sm text-gray-600">Clean & Uncluttered</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-lg bg-gray-800 border border-gray-900 shadow-md"></div>
+                        <p class="mt-2 font-medium">Text (Dark Grey)</p>
+                        <p class="text-sm text-gray-600">Readable</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="impact-panel" class="tab-panel">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">The Impact: Outcomes & Future</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    The final design directly tackles the core user pains identified in our research, providing a clear path to value for all our key personas.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h4 class="text-2xl font-semibold text-blue-800 mb-3">Outcome for Priya (The Student)</h4>
+                        <p class="text-blue-700">A budget-friendly, transparent service. She knows the cost upfront (via packages and summary) and can trust her clothes will be back for the weekend.</p>
+                    </div>
+                    <div class="p-6 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 class="text-2xl font-semibold text-green-800 mb-3">Outcome for Amit (The Professional)</h4>
+                        <p class="text-green-700">A time-saving, reliable tool. He can book his specific "Iron" service, add a note for "work shirts," and pay from his office, all in under two minutes.</p>
+                    </div>
+                    <div class="p-6 bg-purple-50 border border-purple-200 rounded-lg">
+                        <h4 class="text-2xl font-semibold text-purple-800 mb-3">Outcome for Raj & Neha (The Couple)</h4>
+                        <p class="text-purple-700">A single service for their bulk "Wash & Fold" (Large Load) and their "Premium Care" delicates. The "Add Note" feature is perfect for their separation request.</p>
+                    </div>
+                    <div class="p-6 bg-red-50 border border-red-200 rounded-lg">
+                        <h4 class="text-2xl font-semibold text-red-800 mb-3">Outcome for Aarav (The Gig Worker)</h4>
+                        <p class="text-red-700">Total flexibility. He can book on-demand when he has funds and use the "Cash on Delivery" option, removing any commitment anxiety.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Visualizing Package Costs</h3>
+                <p class="text-lg text-gray-700 mb-6">
+                    A key part of serving "Budget-Conscious" users like Priya was offering clear, bundled pricing. This chart visualizes the "per load" package costs from the app.
+                </p>
+                <div class="chart-container">
+                    <canvas id="costChart"></canvas>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-gray-800 mt-12 mb-4">Future Steps</h3>
+                <p class="text-lg text-gray-700 mb-6">
+                    This project reinforced that good design isn't about adding features; it's about removing friction. Based on this, future steps would include:
+                </p>
+                <ul class="list-disc list-inside space-y-3 text-lg text-gray-700">
+                    <li><b>Subscriptions:</b> A "Washy Wash Prime" for high-frequency users like Meera (the intern) and Karan (the fitness enthusiast) with fixed weekly pickups.</li>
+                    <li><b>Vendor-Side App:</b> Designing the partner app for the laundry services and delivery agents to manage orders and chat.</li>
+                    <li><b>Enhanced Tracking:</b> Integrating live-driver tracking on a map (like food delivery) to give Aarav (the gig worker) precise delivery windows.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+            
+            const personaNav = document.getElementById('persona-nav');
+            const allPersonaCards = document.querySelectorAll('.persona-card');
+
+            const screenNav = document.getElementById('screen-nav');
+            const screenImage = document.getElementById('screen-image');
+            const screenDesc = document.getElementById('screen-desc');
+
+            const screenData = {
+                'welcome': {
+                    img: 'Screenshot 2025-10-30 155717.png',
+                    desc: '(Welcome Screen, far left) The splash screen establishes the "Washy Wash" brand and moves the user forward.'
+                },
+                'signup': {
+                    img: 'Screenshot 2025-10-30 155717.png',
+                    desc: '(Sign Up screen, third from left) A simple, standard email/password flow with social login options.'
+                },
+                'login': {
+                    img: 'Screenshot 2025-10-30 155717.png',
+                    desc: '(Login screen, second from left) A clean login screen for returning users.'
+                },
+                'home': {
+                    img: 'Screenshot 2025-10-30 155717.png',
+                    desc: '(Home screen, far right) The main dashboard showing services and nearby service providers.'
+                },
+                'provider': {
+                    img: 'Screenshot 2025-10-30 160322.png',
+                    desc: '(Provider Details, left) Shows full details for a selected provider, including services, ratings, and customer reviews.'
+                },
+                'package': {
+                    img: 'Screenshot 2025-10-30 155757.png',
+                    desc: '(Package Selection, left/middle) Users can choose simple, bundled packages for different services (Wash, Iron, etc.).'
+                },
+                'schedule': {
+                    img: 'Screenshot 2025-10-30 155757.png',
+                    desc: '(Date & Time selection, far right) A simple, visual, tap-to-select interface for choosing a date and pickup time.'
+                },
+                'address': {
+                    img: 'Screenshot 2025-10-30 155916.png',
+                    desc: '(Saved Address selection, far left) Repeat users can select a saved address with one tap.'
+                },
+                'new_address': {
+                    img: 'Screenshot 2025-10-30 160042.png',
+                    desc: '(Add New Address form, far left) An easy-to-use form with a "Detect My Location" feature.'
+                },
+                'custom_load': {
+                    img: 'Screenshot 2025-10-30 160218.png',
+                    desc: '(Custom Load, far right) Allows users to itemize their clothes for custom pricing instead of using a package.'
+                },
+                'summary': {
+                    img: 'Screenshot 2025-10-30 155916.png',
+                    desc: '(Order Summary, second from left) The "No-Surprises" summary. Users see a complete, itemized breakdown.'
+                },
+                'payment': {
+                    img: 'Screenshot 2025-10-30 155916.png',
+                    desc: '(Payment Options, third from left) A comprehensive list of payment options, including "Cash on Delivery".'
+                },
+                'confirmed': {
+                    img: 'Screenshot 2025-10-30 155916.png',
+                    desc: '(Order Confirmed, far right) A clear confirmation screen after successful payment.'
+                },
+                'tracking': {
+                    img: 'Screenshot 2025-10-30 160042.png',
+                    desc: '(Order Tracking, second from left) A visual, step-by-step tracker to solve "Black Box Anxiety".'
+                },
+                'feedback': {
+                    img: 'Screenshot 2025-10-30 160042.png',
+                    desc: '(Feedback, third from left) Allows users to rate the service and leave comments after completion.'
+                },
+                'thanks': {
+                    img: 'Screenshot 2025-10-30 160042.png',
+                    desc: '(Thank You, far right) A final screen after submitting feedback.'
+                },
+                'profile': {
+                    img: 'Screenshot 2025-10-30 160218.png',
+                    desc: '(Profile Menu, far left) The main user profile and navigation hub.'
+                },
+                'history': {
+                    img: 'Screenshot 2025-10-30 160218.png',
+                    desc: '(Order History, second from left) A list of all past and active orders with their status.'
+                },
+                'chat': {
+                    img: 'Screenshot 2025-10-30 160218.png',
+                    desc: '(Chat, third from left) A built-in chat feature for users to communicate with support or providers.'
+                }
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    
+                    tabs.forEach(t => t.classList.replace('active', 'inactive'));
+                    
+                    panels.forEach(p => p.style.display = 'none');
+                    
+                    tab.classList.replace('inactive', 'active');
+                    
+                    const targetPanel = document.getElementById(tab.dataset.tab + '-panel');
+                    targetPanel.style.display = 'block';
+                });
+            });
+
+            if (personaNav) {
+                personaNav.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        const targetPersona = e.target.dataset.persona;
+
+                        
+                        document.querySelectorAll('#persona-nav .persona-btn').forEach(btn => {
+                            btn.classList.replace('active', 'inactive');
+                        });
+                        e.target.classList.replace('inactive', 'active');
+
+                        
+                        allPersonaCards.forEach(card => {
+                            if (card.dataset.persona === targetPersona) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            }
+
+            if (screenNav) {
+                screenNav.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        const screenKey = e.target.dataset.screen;
+                        if (screenData[screenKey]) {
+                            
+                            document.querySelectorAll('.screen-btn').forEach(btn => btn.classList.replace('active', 'inactive'));
+                            
+                            e.target.classList.replace('inactive', 'active');
+                            
+                            screenImage.src = screenData[screenKey].img;
+                            screenDesc.textContent = screenData[screenKey].desc;
+                        }
+                    }
+                });
+            }
+
+            // New Sub-Tab logic for Solution Panel
+            const solutionSubNav = document.getElementById('solution-sub-nav');
+            const solutionSubPanels = document.querySelectorAll('#solution-sub-panels .sub-tab-panel');
+
+            if (solutionSubNav) {
+                solutionSubNav.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        const targetSubTab = e.target.dataset.subtab;
+
+                        // Update button states
+                        document.querySelectorAll('#solution-sub-nav .sub-tab-btn').forEach(btn => {
+                            btn.classList.replace('active', 'inactive');
+                        });
+                        e.target.classList.replace('inactive', 'active');
+
+                        // Update panel visibility
+                        solutionSubPanels.forEach(panel => {
+                            if (panel.id === `${targetSubTab}-panel`) {
+                                panel.style.display = 'block';
+                            } else {
+                                panel.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            }
+
+            const ctx = document.getElementById('costChart').getContext('2d');
+            const costChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Small Load', 'Medium Load', 'Large Load'],
+                    datasets: [{
+                        label: 'Package Cost (in ₹)',
+                        data: [300, 450, 600],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(2, 132, 199, 0.7)',
+                            'rgba(14, 165, 233, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(14, 165, 233, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ₹' + context.parsed.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
